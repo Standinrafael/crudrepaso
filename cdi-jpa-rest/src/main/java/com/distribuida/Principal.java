@@ -85,31 +85,42 @@ public class Principal {
     }
 
     static boolean crearPersona(Request req, Response res) {
-        res.type("application/json");
-
-        // Convertir el cuerpo de la solicitud a un objeto Persona (asumiendo que estás enviando datos JSON en la solicitud)
-        Gson gson = new Gson();
-        Persona nuevaPersona = gson.fromJson(req.body(), Persona.class);
-
-
-
         var servicio = container.select(ServicioPersona.class).get();
+        res.type("application/json");
+        Gson gson = new Gson();
+        var nuevaPersona = gson.fromJson(req.body(), Persona.class);
         servicio.insert(nuevaPersona);
 
-        // Retornar un mensaje de éxito o cualquier otro objeto que desees convertir a JSON
+
         return true;
     }
 
+    //Solucionar el cross con vue
+    static void configureCors() {
+        before((request, response) -> {
+            // Configuración CORS
+            response.header("Access-Control-Allow-Origin", "*");
+            response.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            response.header("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept");
+            response.header("Access-Control-Allow-Credentials", "true");
+        });
+
+        options("/*", (request, response) -> {
+            response.status(200);
+            return "OK";
+        });
+    }
 
     public static void main(String[] args) {
         container = SeContainerInitializer
                 .newInstance()
                 .initialize();
 
-        ServicioPersona servicio = container.select(ServicioPersona.class)
-                .get();
+        //ServicioPersona servicio = container.select(ServicioPersona.class)
+        //        .get();
 
         port(8080);
+        configureCors();
 
 //        //--
 //        Persona p = new Persona();
@@ -131,6 +142,8 @@ public class Principal {
 
         //get("/hello", (req, res) -> "Hello World");
 
+
+
         Gson gson = new Gson();
         get("/personas", Principal::listarPersonas, gson::toJson);
         get("/personas/:id", Principal::buscarPersona, gson::toJson);
@@ -140,5 +153,7 @@ public class Principal {
         put("/personas/actualizar/:id", Principal::actualizarPersona, gson::toJson);
 
 
+
     }
+
 }

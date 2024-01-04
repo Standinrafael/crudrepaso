@@ -34,17 +34,20 @@ public class ServicioPersonaImpl implements ServicioPersona {
             if (persona != null) {
                 // Si la persona existe, elimínala
                 em.remove(persona);
-                tx.commit(); // Completar la transacción si la eliminación fue exitosa
-                return true; // Retornar true indicando que la operación fue exitosa
+                // Completar la transacción si la eliminación fue exitosa
+                tx.commit();
+                return true;
             } else {
                 System.out.println("La persona con ID " + id + " no fue encontrada.");
-                tx.rollback(); // Revertir la transacción si la persona no fue encontrada
-                return false; // Retornar false indicando que la operación no fue exitosa
+                // Revertir la transacción si la persona no fue encontrada
+                tx.rollback();
+                return false;
             }
         } catch (Exception ex) {
-            tx.rollback(); // Revertir la transacción en caso de error
-
-            return false; // Retornar false indicando que la operación no fue exitosa
+            // Revertir la transacción en caso de error
+            tx.rollback();
+            // Retornar false indicando que la operación no fue exitosa
+            return false;
         }
     }
 
@@ -57,10 +60,12 @@ public class ServicioPersonaImpl implements ServicioPersona {
             tx.begin();
             em.merge(persona);
             tx.commit();
-            return true; // Retorna true indicando que la actualización fue exitosa
+            // Retorna true indicando que la actualización fue exitosa
+            return true;
         } catch(Exception ex) {
             tx.rollback();
-            return false; // Retorna false indicando que ocurrió un error durante la actualización
+            // Retorna false indicando que ocurrió un error durante la actualización
+            return false;
         }
     }
 
